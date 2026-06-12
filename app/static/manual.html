@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>用户手册 - Linux 存储管理</title>
+    <style>
+      :root {
+        --bg: #f6f7f9;
+        --surface: #ffffff;
+        --line: #d9dee7;
+        --text: #18202c;
+        --muted: #657184;
+        --accent: #0f766e;
+        --accent-strong: #0b5d56;
+        --danger: #b42318;
+        --danger-strong: #8f1d14;
+        --warning: #d97706;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Inter, "Segoe UI", Arial, "Microsoft YaHei", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.7;
+      }
+      .topbar {
+        min-height: 64px;
+        padding: 14px 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #1f2937;
+        color: #fff;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      .topbar h1 { margin: 0; font-size: 20px; font-weight: 700; }
+      .topbar a {
+        color: #cbd5e1;
+        text-decoration: none;
+        font-size: 14px;
+        padding: 8px 14px;
+        border: 1px solid #4b5563;
+        border-radius: 6px;
+        background: #374151;
+      }
+      .topbar a:hover { color: #fff; background: #4b5563; }
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 32px 28px 60px;
+      }
+      h2 { font-size: 22px; margin-top: 40px; margin-bottom: 16px; color: #111827; border-bottom: 2px solid var(--accent); padding-bottom: 8px; }
+      h3 { font-size: 18px; margin-top: 28px; margin-bottom: 12px; color: #1f2937; }
+      h4 { font-size: 15px; margin-top: 20px; margin-bottom: 8px; color: #374151; }
+      p { margin: 8px 0; }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16px 0;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      th, td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; font-size: 14px; }
+      th { background: #f0f3f7; font-weight: 700; color: #39465a; }
+      code {
+        background: #f0f3f7;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: "SF Mono", Monaco, "Cascadia Code", monospace;
+        font-size: 13px;
+      }
+      pre {
+        background: #1f2937;
+        color: #e5e7eb;
+        padding: 16px;
+        border-radius: 8px;
+        overflow-x: auto;
+        font-size: 13px;
+        line-height: 1.6;
+      }
+      pre code { background: transparent; padding: 0; color: inherit; }
+      .alert {
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin: 16px 0;
+        font-size: 14px;
+      }
+      .alert-info { background: #e0f2fe; border-left: 4px solid #0ea5e9; color: #0c4a6e; }
+      .alert-warning { background: #fef3c7; border-left: 4px solid var(--warning); color: #78350f; }
+      .alert-danger { background: #fee2e2; border-left: 4px solid var(--danger); color: #7f1d1d; }
+      ul, ol { margin: 8px 0; padding-left: 24px; }
+      li { margin: 4px 0; }
+      .badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 700;
+        margin-right: 4px;
+      }
+      .badge-danger { background: #fee2e2; color: #991b1b; }
+      .badge-warning { background: #fef3c7; color: #92400e; }
+      .badge-info { background: #dbeafe; color: #1e40af; }
+      @media (max-width: 720px) {
+        .container { padding: 20px 16px 40px; }
+        .topbar { padding: 12px 16px; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <h1>📘 Linux 存储管理 — 用户手册</h1>
+      <a href="/">← 返回面板</a>
+    </header>
+
+    <div class="container">
+      <p><strong>系统地址</strong>：<code>https://112.124.15.21/storage-manager/</code><br/>
+         <strong>认证方式</strong>：HTTP Basic Auth（用户名/密码）</p>
+
+      <h2>一、系统登录</h2>
+      <ol>
+        <li>打开浏览器，访问系统地址</li>
+        <li>在弹出的认证对话框中输入用户名和密码</li>
+        <li>登录成功后进入主界面</li>
+      </ol>
+
+      <h2>二、界面概览</h2>
+      <p>主界面分为五个功能标签页：</p>
+      <table>
+        <tr><th>标签页</th><th>功能说明</th></tr>
+        <tr><td><strong>概览</strong></td><td>查看所有块设备、挂载点和磁盘空间使用情况</td></tr>
+        <tr><td><strong>挂载</strong></td><td>挂载新设备、卸载已有设备</td></tr>
+        <tr><td><strong>文件系统</strong></td><td>创建文件系统（格式化）、扩展文件系统空间</td></tr>
+        <tr><td><strong>目录</strong></td><td>浏览目录、创建/删除目录、调整权限</td></tr>
+        <tr><td><strong>审计</strong></td><td>查看所有管理操作的历史记录</td></tr>
+      </table>
+      <div class="alert alert-info">💡 <strong>提示</strong>：顶部工具栏右侧有 <strong>刷新按钮（↻）</strong>，点击可刷新当前所有数据。</div>
+
+      <h2>三、功能详解</h2>
+
+      <h3>3.1 概览 — 设备与空间</h3>
+      <p><strong>用途</strong>：一目了然地查看系统所有存储设备状态和磁盘使用情况。</p>
+
+      <h4>设备列表</h4>
+      <table>
+        <tr><th>字段</th><th>说明</th></tr>
+        <tr><td>设备</td><td>设备路径（如 <code>/dev/sda</code>、<code>/dev/nvme0n1</code>）</td></tr>
+        <tr><td>类型</td><td>disk（磁盘）、part（分区）、lvm（逻辑卷）等</td></tr>
+        <tr><td>大小</td><td>设备容量</td></tr>
+        <tr><td>文件系统</td><td>已识别的文件系统类型</td></tr>
+        <tr><td>挂载点</td><td>设备当前挂载位置</td></tr>
+      </table>
+
+      <h4>空间使用</h4>
+      <table>
+        <tr><th>字段</th><th>说明</th></tr>
+        <tr><td>文件系统</td><td>文件系统设备名</td></tr>
+        <tr><td>类型</td><td>文件系统类型</td></tr>
+        <tr><td>大小/已用/可用</td><td>容量信息</td></tr>
+        <tr><td>使用率</td><td>使用百分比（高使用率会标红提示）</td></tr>
+        <tr><td>挂载点</td><td>挂载目录</td></tr>
+      </table>
+
+      <h3>3.2 挂载 — 设备挂载与卸载</h3>
+
+      <h4>3.2.1 挂载设备</h4>
+      <p><strong>适用场景</strong>：新硬盘分区、U 盘、网络存储等需要接入系统时。</p>
+      <ol>
+        <li>切换到 <strong>"挂载"</strong> 标签页</li>
+        <li>在 <strong>"挂载设备"</strong> 表单中填写：
+          <ul>
+            <li><strong>设备路径</strong>：如 <code>/dev/sdb1</code>（必须位于 <code>/dev/</code> 下）</li>
+            <li><strong>挂载点</strong>：如 <code>/mnt/data</code>（必须为绝对路径）</li>
+            <li><strong>文件系统</strong>：可选，留空则自动识别</li>
+            <li><strong>挂载参数</strong>：可选，如 <code>defaults,noatime,ro</code></li>
+          </ul>
+        </li>
+        <li>点击 <strong>"挂载"</strong> 按钮</li>
+        <li>操作成功后，右下角会弹出提示</li>
+      </ol>
+
+      <h4>3.2.2 卸载设备</h4>
+      <p><strong>适用场景</strong>：需要安全移除设备前，或调整挂载配置时。</p>
+      <ol>
+        <li>在 <strong>"卸载设备"</strong> 表单中填写：
+          <ul>
+            <li><strong>设备或挂载点</strong>：可以是设备路径或挂载点路径</li>
+            <li><strong>强制卸载</strong>：勾选后使用 <code>-f</code> 参数强制卸载</li>
+          </ul>
+        </li>
+        <li>点击 <strong>"卸载"</strong> 按钮</li>
+      </ol>
+      <div class="alert alert-warning">⚠️ <strong>警告</strong>：卸载前请确保没有进程正在访问该挂载点，否则可能失败。</div>
+
+      <h3>3.3 文件系统 — 格式化与扩容</h3>
+
+      <h4>3.3.1 创建文件系统（格式化）</h4>
+      <p><strong>适用场景</strong>：新硬盘分区首次使用、需要清空并重新格式化设备时。</p>
+      <ol>
+        <li>切换到 <strong>"文件系统"</strong> 标签页</li>
+        <li>在 <strong>"创建文件系统"</strong> 表单中填写：
+          <ul>
+            <li><strong>设备路径</strong>：如 <code>/dev/sdb1</code></li>
+            <li><strong>类型</strong>：选择 <code>ext4</code>、<code>xfs</code>、<code>btrfs</code>、<code>ext3</code> 或 <code>ext2</code></li>
+            <li><strong>卷标</strong>：可选，如 <code>DATA</code></li>
+            <li><strong>覆盖已有签名</strong>：勾选后强制格式化（会清除所有数据！）</li>
+          </ul>
+        </li>
+        <li>点击红色的 <strong>"格式化"</strong> 按钮</li>
+      </ol>
+      <div class="alert alert-danger">🔴 <strong>危险操作</strong>：格式化会<strong>永久删除</strong>设备上的所有数据！请再三确认设备路径无误。</div>
+
+      <table>
+        <tr><th>类型</th><th>特点</th><th>适用场景</th></tr>
+        <tr><td>ext4</td><td>Linux 默认，稳定成熟</td><td>通用存储</td></tr>
+        <tr><td>xfs</td><td>高性能，大文件友好</td><td>大数据、日志存储</td></tr>
+        <tr><td>btrfs</td><td>现代特性，快照支持</td><td>高级文件管理</td></tr>
+        <tr><td>ext3/ext2</td><td>兼容旧系统</td><td>遗留系统兼容</td></tr>
+      </table>
+
+      <h4>3.3.2 扩展空间（扩容）</h4>
+      <p><strong>适用场景</strong>：逻辑卷或分区扩容后，需要扩展文件系统以利用新增空间。</p>
+      <ol>
+        <li>在 <strong>"扩展空间"</strong> 表单中填写：
+          <ul>
+            <li><strong>设备路径</strong>：如 <code>/dev/sdb1</code></li>
+            <li><strong>类型</strong>：文件系统类型</li>
+            <li><strong>挂载点</strong>：xfs 和 btrfs 扩容时需要提供挂载点</li>
+          </ul>
+        </li>
+        <li>点击 <strong>"扩容"</strong> 按钮</li>
+      </ol>
+      <div class="alert alert-info">💡 <strong>前置条件</strong>：扩容文件系统前，底层分区或逻辑卷必须已经扩展。本系统只负责扩展文件系统本身。</div>
+
+      <h3>3.4 目录 — 浏览与管理</h3>
+
+      <h4>3.4.1 浏览目录</h4>
+      <ol>
+        <li>切换到 <strong>"目录"</strong> 标签页</li>
+        <li>在顶部 <strong>"当前目录"</strong> 输入框中输入路径（如 <code>/mnt</code>）</li>
+        <li>点击 <strong>"打开"</strong> 按钮</li>
+        <li>下方表格显示该目录下的所有文件和子目录</li>
+      </ol>
+
+      <h4>3.4.2 创建目录</h4>
+      <ol>
+        <li>在 <strong>"创建目录"</strong> 表单中填写目录路径（如 <code>/mnt/data/logs</code>）</li>
+        <li>点击 <strong>"创建"</strong> 按钮</li>
+        <li>系统会自动创建父目录（等同于 <code>mkdir -p</code>）</li>
+      </ol>
+
+      <h4>3.4.3 删除目录</h4>
+      <ol>
+        <li>在 <strong>"删除目录"</strong> 表单中填写目录路径</li>
+        <li>勾选 <strong>"递归删除"</strong> 以删除目录及其所有内容</li>
+        <li>点击红色的 <strong>"删除"</strong> 按钮</li>
+      </ol>
+      <div class="alert alert-danger">🔴 <strong>危险操作</strong>：删除操作<strong>不可恢复</strong>！递归删除会清除目录下所有文件和子目录。</div>
+
+      <h4>3.4.4 权限调整</h4>
+      <ol>
+        <li>在 <strong>"权限调整"</strong> 表单中填写：
+          <ul>
+            <li><strong>路径</strong>：要调整权限的文件或目录</li>
+            <li><strong>权限</strong>：八进制模式，如 <code>755</code>、<code>0644</code></li>
+            <li><strong>用户/用户组</strong>：可选，新属主和属组</li>
+          </ul>
+        </li>
+        <li>点击 <strong>"应用"</strong> 按钮</li>
+      </ol>
+
+      <table>
+        <tr><th>权限</th><th>说明</th></tr>
+        <tr><td><code>755</code></td><td>所有者可读写执行，其他用户可读执行（目录默认）</td></tr>
+        <tr><td><code>644</code></td><td>所有者可读写，其他用户只读（文件默认）</td></tr>
+        <tr><td><code>700</code></td><td>仅所有者可访问</td></tr>
+        <tr><td><code>777</code></td><td>所有人可读写执行（慎用）</td></tr>
+      </table>
+
+      <h3>3.5 审计 — 操作日志</h3>
+      <p><strong>用途</strong>：追踪所有管理操作，便于故障排查和安全审计。</p>
+      <table>
+        <tr><th>字段</th><th>说明</th></tr>
+        <tr><td>时间</td><td>操作执行时间</td></tr>
+        <tr><td>动作</td><td>操作类型（mount、unmount、make_filesystem 等）</td></tr>
+        <tr><td>命令</td><td>实际执行的系统命令</td></tr>
+        <tr><td>结果</td><td>成功 或 失败及返回码</td></tr>
+      </table>
+      <div class="alert alert-info">🔒 <strong>安全提示</strong>：审计日志存储在 SQLite 数据库中，建议定期备份 <code>/opt/storage-manager/data/storage_manager.sqlite3</code>。</div>
+
+      <h2>四、操作示例</h2>
+
+      <h4>示例 1：挂载一块新硬盘</h4>
+      <pre><code>1. 插入/连接新硬盘
+2. 在"概览"页确认设备出现（如 /dev/sdb1）
+3. 切换到"挂载"页
+4. 填写：设备路径=/dev/sdb1，挂载点=/mnt/data，文件系统=ext4
+5. 点击"挂载"
+6. 在"概览"页确认挂载成功
+7. 切换到"目录"页，浏览 /mnt/data 确认可访问</code></pre>
+
+      <h4>示例 2：格式化并挂载 U 盘</h4>
+      <pre><code>1. 插入 U 盘
+2. 在"概览"页确认设备（如 /dev/sdc1）
+3. 切换到"文件系统"页
+4. 填写：设备路径=/dev/sdc1，类型=ext4，勾选"覆盖已有签名"
+5. 点击"格式化"（⚠️ 数据将被清空）
+6. 切换到"挂载"页
+7. 填写：设备路径=/dev/sdc1，挂载点=/mnt/usb
+8. 点击"挂载"</code></pre>
+
+      <h4>示例 3：为 Web 服务创建日志目录</h4>
+      <pre><code>1. 切换到"目录"页
+2. 在"创建目录"中填写：/var/www/logs
+3. 点击"创建"
+4. 在"权限调整"中填写：路径=/var/www/logs，权限=755，用户=www-data，用户组=www-data
+5. 点击"应用"
+6. 在"审计"页查看操作记录</code></pre>
+
+      <h2>五、安全注意事项</h2>
+
+      <h4>5.1 认证安全</h4>
+      <ul>
+        <li>生产环境务必修改默认密码</li>
+        <li>当前通过 Nginx HTTPS 访问，后端 8010 端口仅监听本地</li>
+      </ul>
+
+      <h4>5.2 操作安全</h4>
+      <table>
+        <tr><th>风险等级</th><th>操作</th><th>建议</th></tr>
+        <tr><td><span class="badge badge-danger">高危</span></td><td>格式化设备</td><td>操作前确认设备路径，避免误格式化系统盘</td></tr>
+        <tr><td><span class="badge badge-danger">高危</span></td><td>递归删除目录</td><td>确认路径正确，关键系统目录已被保护</td></tr>
+        <tr><td><span class="badge badge-warning">中危</span></td><td>强制卸载</td><td>可能导致数据损坏，仅在其他方式失败时使用</td></tr>
+        <tr><td><span class="badge badge-info">低危</span></td><td>查看操作</td><td>只读操作，无风险</td></tr>
+      </table>
+
+      <h4>5.3 关键目录保护</h4>
+      <p>以下目录<strong>禁止</strong>进行创建/删除/权限修改操作：</p>
+      <pre><code>/ /bin /boot /dev /etc /lib /lib64
+/proc /root /run /sbin /sys /usr /var</code></pre>
+
+      <h2>六、故障排查</h2>
+
+      <table>
+        <tr><th>问题</th><th>原因</th><th>解决</th></tr>
+        <tr><td>挂载失败 "设备忙"</td><td>有进程正在使用该挂载点</td><td><code>lsof /mnt/data</code> 或 <code>fuser -mv /mnt/data</code></td></tr>
+        <tr><td>格式化失败 "设备已挂载"</td><td>设备当前已挂载</td><td>先卸载设备，再格式化</td></tr>
+        <tr><td>权限修改失败 "用户不存在"</td><td>用户名/用户组不存在</td><td>先创建用户/用户组，或留空不修改</td></tr>
+        <tr><td>xfs 扩容失败</td><td>xfs 必须在已挂载状态下扩容</td><td>确保设备已挂载，并填写挂载点</td></tr>
+      </table>
+
+      <h4>服务无法访问排查</h4>
+      <pre><code>systemctl status storage-manager    # 查看服务状态
+journalctl -u storage-manager -n 50 # 查看日志
+ss -tlnp | grep 8010                # 确认端口监听
+nginx -t                            # 检查 Nginx 配置</code></pre>
+
+      <h2>七、技术架构</h2>
+      <pre><code>用户浏览器 → Nginx (443 HTTPS)
+                ↓
+         /storage-manager/ 反向代理
+                ↓
+         uvicorn (127.0.0.1:8010)
+                ↓
+         FastAPI (app.main:app)
+                ↓
+    ┌──────────┴──────────┐
+    ↓                     ↓
+storage.py           SQLAlchemy ORM
+(系统命令)            ↓
+    ↓              SQLite
+lsblk/df/           (审计日志)
+mount/umount/
+mkfs/resize2fs</code></pre>
+
+      <p style="margin-top: 40px; color: var(--muted); font-size: 13px; text-align: center;">
+        Linux 存储管理 Web 面板 v2.0.0 · 技术栈：Linux + Python + FastAPI + SQLAlchemy + SQLite
+      </p>
+    </div>
+  </body>
+</html>

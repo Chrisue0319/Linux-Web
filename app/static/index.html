@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Linux 存储管理</title>
+    <link rel="stylesheet" href="static/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <h1>Linux 存储管理</h1>
+        <p id="status">连接中...</p>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <a href="static/manual.html" target="_blank" class="icon-btn" title="用户手册" style="text-decoration:none;display:flex;align-items:center;justify-content:center;font-size:16px;">📘</a>
+        <button id="refreshBtn" class="icon-btn" title="刷新">↻</button>
+      </div>
+    </header>
+
+    <nav class="tabs" aria-label="功能导航">
+      <button class="tab active" data-tab="overview">概览</button>
+      <button class="tab" data-tab="mount">挂载</button>
+      <button class="tab" data-tab="filesystem">文件系统</button>
+      <button class="tab" data-tab="directory">目录</button>
+      <button class="tab" data-tab="audit">审计</button>
+    </nav>
+
+    <main>
+      <section id="overview" class="panel active">
+        <div class="section-head">
+          <h2>硬件磁盘与分区展示表</h2>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>设备路径</th>
+                <th>设备类型</th>
+                <th>大小</th>
+                <th>文件系统类型</th>
+                <th>卷标</th>
+                <th>挂载点</th>
+              </tr>
+            </thead>
+            <tbody id="devicesBody"></tbody>
+          </table>
+        </div>
+        <div class="section-head">
+          <h2>已挂载文件系统空间占用表</h2>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>存储来源</th>
+                <th>文件系统类型</th>
+                <th>大小</th>
+                <th>已用</th>
+                <th>可用</th>
+                <th>使用率</th>
+                <th>挂载点</th>
+              </tr>
+            </thead>
+            <tbody id="usageBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="mount" class="panel">
+        <div class="form-grid">
+          <form id="mountForm">
+            <h2>挂载设备</h2>
+            <label>设备路径<input name="device" placeholder="/dev/sdb1" required /></label>
+            <label>挂载点<input name="mount_point" placeholder="/mnt/data" required /></label>
+            <label>文件系统
+              <select name="fs_type">
+                <option value="">自动识别</option>
+                <option>ext4</option>
+                <option>xfs</option>
+                <option>btrfs</option>
+                <option>ext3</option>
+                <option>ext2</option>
+              </select>
+            </label>
+            <label>挂载参数<input name="options" placeholder="defaults,noatime" /></label>
+            <button type="submit">挂载</button>
+          </form>
+
+          <form id="unmountForm">
+            <h2>卸载设备</h2>
+            <label>设备或挂载点<input name="target" placeholder="/mnt/data" required /></label>
+            <label class="check"><input type="checkbox" name="force" /> 强制卸载</label>
+            <button type="submit">卸载</button>
+          </form>
+        </div>
+      </section>
+
+      <section id="filesystem" class="panel">
+        <div class="form-grid">
+          <form id="filesystemForm">
+            <h2>创建文件系统</h2>
+            <label>设备路径<input name="device" placeholder="/dev/sdb1" required /></label>
+            <label>类型
+              <select name="fs_type" required>
+                <option>ext4</option>
+                <option>xfs</option>
+                <option>btrfs</option>
+                <option>ext3</option>
+                <option>ext2</option>
+              </select>
+            </label>
+            <label>卷标<input name="label" placeholder="DATA" /></label>
+            <label class="check"><input type="checkbox" name="force" /> 覆盖已有签名</label>
+            <button type="submit" class="danger">格式化</button>
+          </form>
+
+          <form id="resizeForm">
+            <h2>扩展空间</h2>
+            <label>设备路径<input name="device" placeholder="/dev/sdb1" required /></label>
+            <label>类型
+              <select name="fs_type" required>
+                <option>ext4</option>
+                <option>xfs</option>
+                <option>btrfs</option>
+                <option>ext3</option>
+                <option>ext2</option>
+              </select>
+            </label>
+            <label>挂载点<input name="mount_point" placeholder="xfs/btrfs 需要，如 /mnt/data" /></label>
+            <button type="submit">扩容</button>
+          </form>
+
+          <form id="labelForm">
+            <h2>修改卷标</h2>
+            <label>设备路径<input name="device" placeholder="/dev/sdb1" required /></label>
+            <label>类型
+              <select name="fs_type" required>
+                <option>ext4</option>
+                <option>xfs</option>
+                <option>btrfs</option>
+                <option>ext3</option>
+                <option>ext2</option>
+              </select>
+            </label>
+            <label>新卷标<input name="label" placeholder="DATA" required /></label>
+            <button type="submit">修改</button>
+          </form>
+        </div>
+      </section>
+
+      <section id="directory" class="panel">
+        <div class="dir-tools">
+          <label>当前目录<input id="dirPath" value="/mnt" /></label>
+          <button id="goUpBtn">返回上级</button>
+          <button id="loadDirBtn">打开</button>
+        </div>
+        <div class="breadcrumb" id="breadcrumb"></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>名称</th>
+                <th>类型</th>
+                <th>权限</th>
+                <th>属主</th>
+                <th>大小</th>
+              </tr>
+            </thead>
+            <tbody id="dirBody"></tbody>
+          </table>
+        </div>
+        <div class="form-grid">
+          <form id="createDirForm">
+            <h2>创建目录</h2>
+            <label>目录路径<input name="path" placeholder="/mnt/data/logs" required /></label>
+            <button type="submit">创建</button>
+          </form>
+          <form id="deleteDirForm">
+            <h2>删除目录</h2>
+            <label>目录路径<input name="path" placeholder="/mnt/data/logs" required /></label>
+            <label class="check"><input type="checkbox" name="recursive" /> 递归删除</label>
+            <button type="submit" class="danger">删除</button>
+          </form>
+          <form id="permissionForm">
+            <h2>权限调整</h2>
+            <label>路径<input name="path" placeholder="/mnt/data" required /></label>
+            <label>权限<input name="mode" placeholder="0755" required /></label>
+            <label>用户<input name="owner" placeholder="可选" /></label>
+            <label>用户组<input name="group" placeholder="可选" /></label>
+            <button type="submit">应用</button>
+          </form>
+        </div>
+      </section>
+
+      <section id="audit" class="panel">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>时间</th>
+                <th>动作</th>
+                <th>命令</th>
+                <th>结果</th>
+              </tr>
+            </thead>
+            <tbody id="auditBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <div id="toast" role="status" aria-live="polite"></div>
+
+    <!-- 居中错误弹窗 -->
+    <div id="errorModal" class="error-modal" style="display:none;">
+      <div class="error-modal-backdrop"></div>
+      <div class="error-modal-content">
+        <div class="error-modal-header">
+          <span class="error-modal-icon">⚠️</span>
+          <span class="error-modal-title">操作失败</span>
+        </div>
+        <div class="error-modal-body" id="errorModalBody"></div>
+        <div class="error-modal-footer">
+          <button id="errorModalClose" class="error-modal-btn">确定</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="static/app.js"></script>
+  </body>
+</html>

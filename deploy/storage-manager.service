@@ -1,0 +1,26 @@
+# Linux Storage Manager systemd 服务配置
+#
+# 作者：李泽源、谢子墨
+# 课程：武汉大学开源软件与技术课程 2026
+# 许可证：MIT
+#
+# 安装路径：/etc/systemd/system/storage-manager.service
+# 安装后执行：systemctl daemon-reload && systemctl enable --now storage-manager
+
+[Unit]
+Description=Linux Storage Manager
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/storage-manager
+Environment=STORAGE_MANAGER_USER=admin
+Environment=STORAGE_MANAGER_PASSWORD=Lizeyuan@2006
+ExecStart=/opt/storage-manager/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8010
+Restart=on-failure
+RestartSec=5
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target

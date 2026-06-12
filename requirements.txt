@@ -1,0 +1,11 @@
+# Linux Storage Manager - Python 依赖
+# 作者：李泽源、谢子墨
+# 课程：武汉大学开源软件与技术课程 2026
+# 许可证：MIT
+
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic==2.10.4
+sqlalchemy==2.0.40
+python-multipart>=0.0.6
+httpx>=0.25.0
