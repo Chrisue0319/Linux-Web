@@ -22,7 +22,6 @@ import secrets
 from datetime import timedelta, timezone
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Request
-from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
@@ -57,15 +56,15 @@ from app.storage import (
 )
 
 
-## FastAPI 应用实例
+# FastAPI 应用实例
 app = FastAPI(title="Linux 存储管理", version="1.0.0")
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 
-## 启动时创建所有数据库表
+# 启动时创建所有数据库表
 Base.metadata.create_all(bind=engine)
 
-## 认证用户名与密码，可通过环境变量覆盖
+# 认证用户名与密码，可通过环境变量覆盖
 AUTH_USER = os.getenv("STORAGE_MANAGER_USER", "admin")
 AUTH_PASSWORD = os.getenv("STORAGE_MANAGER_PASSWORD", "change-me")
 
@@ -109,7 +108,6 @@ async def require_basic_auth(request: Request, call_next):
         headers={"WWW-Authenticate": 'Basic realm="Storage Manager"'},
         content="Authentication required",
     )
-
 
 
 def _translate_validation_error(error: dict) -> dict:

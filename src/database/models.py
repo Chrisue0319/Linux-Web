@@ -22,29 +22,29 @@ class AuditLog(Base):
     @extends Base SQLAlchemy 声明式基类
     """
 
-    ## 数据库表名
+    # 数据库表名
     __tablename__ = "audit_logs"
 
-    ## 自增主键
+    # 自增主键
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
 
-    ## 操作类型，如 mount、unmount、make_filesystem 等
+    # 操作类型，如 mount、unmount、make_filesystem 等
     action = Column(String, nullable=False)
 
-    ## 请求参数的 JSON 字符串
+    # 请求参数的 JSON 字符串
     params = Column(String, nullable=False)
 
-    ## 实际执行的系统命令字符串
+    # 实际执行的系统命令字符串
     command = Column(String, nullable=False)
 
-    ## 命令返回码，0 表示成功
+    # 命令返回码，0 表示成功
     return_code = Column(Integer, nullable=False)
 
-    ## 命令标准输出内容
+    # 命令标准输出内容
     stdout = Column(String, default="")
 
-    ## 命令标准错误内容
+    # 命令标准错误内容
     stderr = Column(String, default="")
 
-    ## 记录创建时间，默认使用数据库当前时间
+    # 记录创建时间，默认使用数据库当前时间
     created_at = Column(DateTime(timezone=True), server_default=func.now())

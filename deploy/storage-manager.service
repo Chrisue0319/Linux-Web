@@ -15,7 +15,7 @@ After=network.target
 Type=simple
 WorkingDirectory=/opt/storage-manager
 Environment=STORAGE_MANAGER_USER=admin
-Environment=STORAGE_MANAGER_PASSWORD=Lizeyuan@2006
+Environment=STORAGE_MANAGER_PASSWORD=change-me
 ExecStart=/opt/storage-manager/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8010
 Restart=on-failure
 RestartSec=5

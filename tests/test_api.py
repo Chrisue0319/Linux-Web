@@ -11,19 +11,17 @@
 """
 
 import base64
-import json
 import os
 
 # 在导入 app.main 前设置测试环境变量，使认证配置生效
 os.environ["STORAGE_MANAGER_USER"] = "admin"
 os.environ["STORAGE_MANAGER_PASSWORD"] = "admin"
 
-import pytest
-from fastapi.testclient import TestClient
-from http import HTTPStatus
+from fastapi.testclient import TestClient  # noqa: E402
+from http import HTTPStatus  # noqa: E402
 
-from app.main import app, get_db
-from tests.mock_db import TestingSessionLocal
+from app.main import app, get_db  # noqa: E402
+from tests.mock_db import TestingSessionLocal  # noqa: E402
 
 
 def override_get_db():

@@ -17,18 +17,18 @@ from sqlalchemy.pool import StaticPool
 from src.database.core import Base
 
 
-## 内存 SQLite 连接 URL
+# 内存 SQLite 连接 URL
 SQLALCHEMY_DATABASE_URL = "sqlite://"
 
-## 测试用数据库引擎，使用 StaticPool 保证同一线程内会话共享
+# 测试用数据库引擎，使用 StaticPool 保证同一线程内会话共享
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
     connect_args={"check_same_thread": False},
     poolclass=StaticPool,
 )
 
-## 测试用会话工厂
+# 测试用会话工厂
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-## 创建所有表
+# 创建所有表
 Base.metadata.create_all(bind=engine)

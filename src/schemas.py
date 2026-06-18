@@ -20,13 +20,13 @@ from pathlib import Path
 from pydantic import BaseModel, Field, field_validator
 
 
-## 合法设备路径正则：必须以 /dev/ 开头，后续为允许的字符
+# 合法设备路径正则：必须以 /dev/ 开头，后续为允许的字符
 DEVICE_RE = re.compile(r"^/dev/[A-Za-z0-9_./+-]+$")
 
-## 权限模式正则：3 或 4 位八进制数字
+# 权限模式正则：3 或 4 位八进制数字
 MODE_RE = re.compile(r"^[0-7]{3,4}$")
 
-## 支持的文件系统类型集合
+# 支持的文件系统类型集合
 SAFE_FS_TYPES = {"ext4", "ext3", "ext2", "xfs", "btrfs"}
 
 
@@ -98,7 +98,9 @@ class MountRequest(BaseModel):
         if not value:
             return None
         if not re.fullmatch(r"[A-Za-z0-9_,.=:-]+", value):
-            raise ValueError("挂载参数只能包含字母、数字、下划线、逗号、点、等号、冒号和短横线")
+            raise ValueError(
+                "挂载参数只能包含字母、数字、下划线、逗号、点、等号、冒号和短横线"
+            )
         return value
 
 

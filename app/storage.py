@@ -16,7 +16,6 @@ import grp
 import json
 import os
 import pwd
-import re
 import shutil
 import subprocess
 from pathlib import Path
@@ -34,7 +33,7 @@ from src.schemas import (
 )
 
 
-## 关键系统目录集合，禁止对其进行创建/删除/权限修改等写操作
+# 关键系统目录集合，禁止对其进行创建/删除/权限修改等写操作
 CRITICAL_PATHS = {
     Path("/"),
     Path("/bin"),
@@ -419,7 +418,13 @@ def set_permissions(payload: PermissionRequest) -> dict[str, Any]:
         raise CommandError(f"没有权限修改该路径的权限: {path}")
     except OSError as exc:
         raise CommandError(f"修改权限失败: {exc}")
-    return {"path": str(path), "mode": payload.mode, "owner": payload.owner, "group": payload.group, "command": ["chmod", payload.mode, str(path)]}
+    return {
+        "path": str(path),
+        "mode": payload.mode,
+        "owner": payload.owner,
+        "group": payload.group,
+        "command": ["chmod", payload.mode, str(path)],
+    }
 
 
 def list_directory(path: str) -> list[dict[str, Any]]:

@@ -7,7 +7,8 @@
 基于 Python、FastAPI、SQLAlchemy 和 SQLite 的轻量级 Linux 存储管理 Web 界面，提供块设备查看、挂载/卸载、文件系统格式化与扩容、目录管理、权限调整以及操作审计日志等功能。
 
 > **作者**：李泽源、谢子墨  
-> **课程**：武汉大学开源软件与技术课程 2026
+> **课程**：武汉大学开源软件与技术课程 2026  
+> **仓库**：https://github.com/Chrisue0319/Linux-Web
 
 ---
 
@@ -112,6 +113,7 @@ cd /opt/storage-manager
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+# 修改 deploy/storage-manager.service 中的 STORAGE_MANAGER_PASSWORD 为强密码
 cp deploy/storage-manager.service /etc/systemd/system/storage-manager.service
 systemctl daemon-reload
 systemctl enable --now storage-manager
